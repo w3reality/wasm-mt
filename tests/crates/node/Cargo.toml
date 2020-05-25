@@ -1,0 +1,16 @@
+[package]
+name = "wasm-mt-test-crate-node"
+version = "0.1.0"
+authors = ["The wasm-mt Developers"]
+edition = "2018"
+
+[lib]
+path = "test.rs"
+
+[dependencies]
+wasm-mt = { path = '../../..' }
+wasm-mt-test = { path = '../../../crates/test' }
+wasm-bindgen-test = "0.3.0"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"

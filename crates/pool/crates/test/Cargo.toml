@@ -1,0 +1,33 @@
+[package]
+name = "wasm-mt-pool-test"
+version = "0.1.0"
+authors = ["The wasm-mt Developers"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+categories = ["wasm"]
+repository = "https://github.com/w3reality/wasm-mt/tree/master/crates/pool/crates/test"
+homepage = "https://github.com/w3reality/wasm-mt/tree/master/crates/pool/crates/test"
+documentation = "https://docs.rs/wasm-mt-pool-test"
+description = """
+Utility for testing crates with wasm-mt-pool.
+"""
+edition = "2018"
+
+[lib]
+test = false
+
+[dependencies]
+wasm-mt = "0.1"
+wasm-mt-test = "0.1"
+wasm-mt-pool = "0.1"
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+serde = "1.0"
+serde_closure = "0.2"
+bincode = "1.2"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  'console',
+]

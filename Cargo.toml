@@ -1,0 +1,72 @@
+[package]
+name = "wasm-mt"
+version = "0.1.0"
+authors = ["The wasm-mt Developers"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+categories = ["wasm"]
+repository = "https://github.com/w3reality/wasm-mt"
+homepage = "https://github.com/w3reality/wasm-mt"
+documentation = "https://docs.rs/wasm-mt"
+description = """
+A multithreading library for Rust and WebAssembly.
+"""
+edition = "2018"
+exclude = [
+    "Makefile",
+    "header.md",
+    "examples/*",
+    "tests/*",
+]
+
+[lib]
+test = false
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.0"
+
+[dependencies]
+js-sys = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_closure = "0.2"
+serde_traitobject = "0.2"
+bincode = "1.2"
+wasm-bindgen = "0.2"
+wasm-bindgen-futures = "0.4"
+uuid = { version = "0.8", features = ["wasm-bindgen", "v4"] }
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  'Blob',
+  'BlobPropertyBag',
+  'console',
+  'MessageEvent',
+  'Response',
+  'TextEncoder',
+  'Url',
+  'Window',
+  'Worker',
+  'WorkerGlobalScope',
+]
+
+[workspace]
+members = [
+  "examples/exec",
+  "examples/executors",
+  "examples/parallel",
+  "examples/fib",
+  "tests/crates/node",  # WIP: add NodeJS compatibility in atw.rs
+  "tests/crates/web",
+  "crates/pool",
+  "crates/pool/examples/pool_exec",
+  "crates/pool/examples/http",
+#  "crates/pool/tests/crates/node",  # WIP
+  "crates/pool/tests/crates/web",
+]
+
+[patch.crates-io]
+wasm-mt = { path = '.' }
+wasm-mt-test = { path = 'crates/test' }
+wasm-mt-pool = { path = 'crates/pool' }
+wasm-mt-pool-test = { path = 'crates/pool/crates/test' }

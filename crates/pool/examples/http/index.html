@@ -1,0 +1,21 @@
+<html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+    <title>http</title>
+</head>
+<body>
+    <div>
+        <h3>crates/pool/examples/http</h3>
+        <p>A multithreaded server based on <code>wasm_mt_pool::ThreadPool</code>.</p>
+        <p>TODO: use HTTP with <a href="https://github.com/hyperium/http">hyperium/http</a> on top of the client-server communication.</p>
+        <p><q>HTTP builds on top of TCP by defining the contents of the requests and responses. It’s technically possible to use HTTP with other protocols, but in the vast majority of cases, HTTP sends its data over TCP.</q> -- <a href="https://doc.rust-lang.org/book/ch20-01-single-threaded.html#building-a-single-threaded-web-server">The Rust Book</a></p>
+        <p><a href="https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/http">source code</a></p>
+        <p>💡 Open the developer console to see the results.</p>
+    </div>
+
+    <script type="module">
+    import startApp from '../deps/start-app.js';
+    startApp('http');
+    </script>
+</body>
+</html>
