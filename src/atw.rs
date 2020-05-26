@@ -1,6 +1,6 @@
 // rust-wasm porting of -- https://github.com/w3reality/async-thread-worker
 
-use crate::debug_ln;
+use crate::{debug_ln, console_ln};
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::JsFuture;
@@ -112,12 +112,12 @@ impl Thread {
     pub fn new(script_url: &str) -> Self {
         let worker = Worker::new(script_url);
         if let Err(ref jsv) = worker {
-            debug_ln!("error: {:?}", jsv);
+            console_ln!("error: {:?}", jsv);
 
             // https://developer.mozilla.org/en-US/docs/Web/API/Worker
             // https://bugs.webkit.org/show_bug.cgi?id=22723
             // https://wpt.fyi/results/workers/semantics/multiple-workers/003.html
-            debug_ln!("Hint: On Safari, nested Web Workers might not be supported as of now.");
+            console_ln!("Hint: On Safari, nested Web Workers might not be supported as of now.");
         }
         let worker = worker.unwrap_throw();
 
