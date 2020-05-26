@@ -155,7 +155,7 @@
 //!
 //! Observe the starting/ending timing of each thread in the developer console:
 //!
-//! ```rust
+//! ```
 //! 🔥 serial executor:
 //! starting a thread
 //! ans: JsValue(42)
