@@ -1,8 +1,9 @@
 all: readme test build
 
-readme: header.md src/lib.rs
-	cat header.md > README.md
-	cat src/lib.rs | grep '^//!' | sed -E 's/\/\/! ?//g' >> README.md
+readme:
+	make -f readme.mk
+	make -C crates/pool -f ../../readme.mk
+
 test: test-mt test-mt-units test-mt-examples \
 	test-pool test-pool-units test-pool-examples
 

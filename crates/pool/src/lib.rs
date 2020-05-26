@@ -18,7 +18,7 @@
 //!
 //! Cargo.toml:
 //!
-//! ```
+//! ```toml
 //! wasm-mt-pool = "0.1"
 //! serde = { version = "1.0", features = ["derive"] }
 //! serde_closure = "0.2"
@@ -26,7 +26,7 @@
 //!
 //! # Usage
 //!
-//! ```
+//! ```rust
 //! #![feature(async_closure)]
 //!
 //! use wasm_mt_pool::prelude::*;

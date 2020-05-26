@@ -1,3 +1,4 @@
+<!-- ⚠️  THIS IS A GENERATED FILE -->
 wasm-mt
 =======
 
@@ -41,7 +42,7 @@ Requirements:
 
 Cargo.toml:
 
-```
+```toml
 wasm-mt = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_closure = "0.2"
@@ -51,7 +52,7 @@ serde_closure = "0.2"
 
 First, create a [`WasmMt`] thread builder with [`new`][WasmMt::new] and initialize it:
 
-```
+```rust
 use wasm_mt::prelude::*;
 
 let pkg_js = "./pkg/exec.js"; // path to `wasm-bindgen`'s JS binding
@@ -60,7 +61,7 @@ let mt = WasmMt::new(pkg_js).and_init().await.unwrap();
 
 Then, create a [`wasm_mt::Thread`][Thread] with the [`thread`][WasmMt::thread] function and initialize it:
 
-```
+```rust
 let th = mt.thread().and_init().await.unwrap();
 ```
 
@@ -68,7 +69,7 @@ let th = mt.thread().and_init().await.unwrap();
 
 Using the [`exec!`] macro, you can execute a closure in the thread and `await` the result:
 
-```
+```rust
 // fn add(a: i32, b: i32) -> i32 { a + b }
 
 let a = 1;
@@ -83,7 +84,7 @@ assert_eq!(ans, JsValue::from(3));
 
 You can also execute an [async closure] with `exec!`:
 
-```
+```rust
 // use wasm_mt::utils::sleep;
 // async fn sub(a: i32, b: i32) -> i32 {
 //    sleep(1000).await;
@@ -104,7 +105,7 @@ assert_eq!(ans, JsValue::from(-1));
 
 Using the [`exec_js!`] macro, you can execute JavaScript within a thread:
 
-```
+```rust
 let ans = exec_js!(th, "
     const add = (a, b) => a + b;
     return add(1, 2);
@@ -114,7 +115,7 @@ assert_eq!(ans, JsValue::from(3));
 
 Similarly, use [`exec_js_async!`] for running asynchronous JavaScript:
 
-```
+```rust
 let ans = exec_js_async!(th, "
     const sub = (a, b) => new Promise(resolve => {
         setTimeout(() => resolve(a - b), 1000);
@@ -132,7 +133,7 @@ Here, for simplicity, we show the implementation of much more  straightforward e
 
 First, prepare a `Vec<wasm_mt::Thread>` containing initialized threads:
 
-```
+```rust
 let mut v: Vec<wasm_mt::Thread> = vec![];
 for i in 0..4 {
     let th = mt.thread().and_init().await?;
@@ -142,7 +143,7 @@ for i in 0..4 {
 
 Then, here's the executors in action. Note, in the latter case, we are using [`wasm_bindgen_futures::spawn_local`](https://rustwasm.github.io/wasm-bindgen/api/wasm_bindgen_futures/fn.spawn_local.html) to dispatch the threads in parallel.
 
-```
+```rust
 console_ln!("🔥 serial executor:");
 for th in &v {
     console_ln!("starting a thread");
@@ -162,7 +163,7 @@ for th in v {
 
 Observe the starting/ending timing of each thread in the developer console:
 
-```
+```rust
 🔥 serial executor:
 starting a thread
 ans: JsValue(42)
