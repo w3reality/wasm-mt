@@ -8,14 +8,12 @@ wasm-mt-pool
 
 A thread pool library based on [`wasm-mt`](https://crates.io/crates/wasm-mt).
 
-<!--
-**Examples**:
+#### Examples
 
-You can run all the following examples in browser!
+You can run all the following apps in browser!
 
-- **pool_exec** - How to use the lib. [ live | source ]
-- **http** - How to use the lib. [ live | source ]
--->
+- **pool_exec** - How to use <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/pool_exec/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/pool_exec) ]
+- **http** - A multithreaded server based on <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/http/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/http) ]
 
 # Getting started
 

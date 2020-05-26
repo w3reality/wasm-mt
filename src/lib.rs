@@ -8,19 +8,18 @@
 //! TODO: explain wasm-mt's approach to rustwasm multithreading in contrast to the [existing canonical work](https://rustwasm.github.io/2018/10/24/multithreading-rust-and-wasm.html "Parallelism through Web Workers")
 //! -->
 //!
-//! <!--
-//! **Examples**:
+//! #### Examples
 //!
-//! You can run all the following examples in browser!
+//! - **`wasm-mt-pool`** - Thread pool library based on `wasm-mt`. [ [crate](https://crates.io/crates/wasm-mt-pool) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool) ]
 //!
-//! - **exec** - How to use the lib. [ live | source ]
-//! - **fib** - How to use the lib. [ live | source ]
-//! - **executors** - How to use the lib. [ live | source ]
-//! - **parallel** - How to use the lib. [ live | source ]
-//! - **`wasm-mt-pool`** - Thread pool based on `wasm-mt`. [ crate | source ]
-//! -->
+//! You can run all the following apps in browser!
 //!
-//! **Thanks**:
+//! - **exec** - How to use <code>wasm_mt</code>. [ [live](https://w3reality.github.io/wasm-mt/examples/exec/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/exec) ]
+//! - **fib** - Computing a Fibonacci sequence with nested threads. [ [live](https://w3reality.github.io/wasm-mt/examples/fib/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/fib) ]
+//! - **executors** - Minimal serial/parallel executors using <code>wasm_mt</code>. [ [live](https://w3reality.github.io/wasm-mt/examples/executors/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/executors) ]
+//! - **parallel** - Julia set benchmark of serial/parallel executors. [ [live](https://w3reality.github.io/wasm-mt/examples/parallel/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/parallel) ]
+//!
+//! #### Thanks
 //!
 //! - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) developers
 //! - [@alecmocatta](https://github.com/alecmocatta) for the [serde_traitobject](https://github.com/alecmocatta/serde_traitobject) crate
@@ -155,7 +154,7 @@
 //!
 //! Observe the starting/ending timing of each thread in the developer console:
 //!
-//! ```
+//! ```text
 //! 🔥 serial executor:
 //! starting a thread
 //! ans: JsValue(42)
