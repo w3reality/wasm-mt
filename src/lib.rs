@@ -2,12 +2,6 @@
 //!
 //! `wasm-mt` helps you create and execute Web Worker based threads. You can program the threads simply using Rust closures and orchestrate them with `async/await`.
 //!
-//! <!--
-//! **Implementation**:
-//!
-//! TODO: explain wasm-mt's approach to rustwasm multithreading in contrast to the [existing canonical work](https://rustwasm.github.io/2018/10/24/multithreading-rust-and-wasm.html "Parallelism through Web Workers")
-//! -->
-//!
 //! #### Examples
 //!
 //! - **`wasm-mt-pool`** - Thread pool library based on `wasm-mt`. [ [crate](https://crates.io/crates/wasm-mt-pool) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool) ]
@@ -18,6 +12,19 @@
 //! - **fib** - Computing a Fibonacci sequence with nested threads. [ [live](https://w3reality.github.io/wasm-mt/examples/fib/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/fib) ]
 //! - **executors** - Minimal serial/parallel executors using <code>wasm_mt</code>. [ [live](https://w3reality.github.io/wasm-mt/examples/executors/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/executors) ]
 //! - **parallel** - Julia set benchmark of serial/parallel executors. [ [live](https://w3reality.github.io/wasm-mt/examples/parallel/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/parallel) ]
+//!
+//! #### Background and implementation
+//!
+//! The preceding seminal work entitiled ["Multithreading Rust and Wasm"](https://rustwasm.github.io/2018/10/24/multithreading-rust-and-wasm.html) by [@alexcrichton](https://github.com/alexcrichton) centers on [*Web Workers*](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), *shared memory*, and [the WebAssembly threads proposal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Overview.md). Shared memory is built on top of [`SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) whose [availability across major browsers](https://caniuse.com/#feat=sharedarraybuffer) has been, unfortunately until today, rather limited and would continue to be. Also, the rust-wasm thread implementation work, along with the threads proposal, is still in progress.
+//!
+//! On the contrary, Web Worker based multithreading in JavaScript is a quite [mature topic](https://caniuse.com/#feat=webworkers). After experimenting, we have come up to a Rust ergonomic multithreading solution that does not require `SharedArrayBuffer`. It just works across all major browsers today. We named it `wasm-mt`.
+//!
+//! Internally, we use the [`postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage) Web Worker API (through bindings provided by [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen)) to initialize spawned threads. And, importantly, we use it again for dynamically sending Rust closures (serialized by [`serde_traitobject`](https://github.com/alecmocatta/serde_traitobject)) to the spawned threads. The parent thread can `await` the results of the closures executed in the spawned thread. Moreover, we have found that this approach is highly flexible for extension; for example, it is straightforward to augment `WasmMt::Thread` to support more customised inter-thread communication patterns.
+//!
+//! Note, however, that `wasm-mt` is by no means a replacement of the ongoing shared memory based multithreading work led by `wasm-bindgen`. Comparatively, `wasm-mt` is not efficient in that it does **not include** support of the standard thread primitive operations:
+//!
+//! - shared memory based message passing and mutexes,
+//! - atomic instructions and efficient memory handling per [the threads proposal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Overview.md).
 //!
 //! #### Thanks
 //!
