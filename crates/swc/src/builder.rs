@@ -13,7 +13,7 @@ use swc_ecma_transforms::{
 pub struct PassBuilder<'a, 'b, P: swc_ecma_visit::Fold> {
     cm: &'a Arc<SourceMap>,
     handler: &'b Handler,
-    env: Option<swc_ecma_preset_env::Config>,
+    // env: Option<swc_ecma_preset_env::Config>,
     pass: P,
     global_mark: Mark,
     target: JscTarget,
@@ -39,7 +39,7 @@ impl<'a, 'b, P: swc_ecma_visit::Fold> PassBuilder<'a, 'b, P> {
             global_mark,
             loose,
             hygiene: true,
-            env: None,
+            // env: None,
             fixer: true,
             inject_helpers: true,
         }
@@ -57,7 +57,7 @@ impl<'a, 'b, P: swc_ecma_visit::Fold> PassBuilder<'a, 'b, P> {
             target: self.target,
             loose: self.loose,
             hygiene: self.hygiene,
-            env: self.env,
+            // env: self.env,
             global_mark: self.global_mark,
             fixer: self.fixer,
             inject_helpers: self.inject_helpers,
@@ -102,10 +102,10 @@ impl<'a, 'b, P: swc_ecma_visit::Fold> PassBuilder<'a, 'b, P> {
         self
     }
 
-    pub fn preset_env(mut self, env: Option<swc_ecma_preset_env::Config>) -> Self {
-        self.env = env;
-        self
-    }
+    // pub fn preset_env(mut self, env: Option<swc_ecma_preset_env::Config>) -> Self {
+    //     self.env = env;
+    //     self
+    // }
 
     /// # Arguments
     /// ## module
@@ -136,11 +136,12 @@ impl<'a, 'b, P: swc_ecma_visit::Fold> PassBuilder<'a, 'b, P> {
         };
 
         // compat
-        let compat_pass = if let Some(env) = self.env {
+        // let compat_pass = if let Some(env) = self.env {
+        let compat_pass = if false {
             Either::Left(chain!(
                 import_assertions(),
                 Optional::new(typescript::strip(), syntax.typescript()),
-                swc_ecma_preset_env::preset_env(self.global_mark, env)
+                // swc_ecma_preset_env::preset_env(self.global_mark, env)
             ))
         } else {
             Either::Right(chain!(

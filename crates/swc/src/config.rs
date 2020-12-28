@@ -16,7 +16,7 @@ use swc_atoms::JsWord;
 pub use swc_common::chain;
 use swc_common::{comments::Comments, errors::Handler, FileName, Mark, SourceMap};
 use swc_ecma_ast::{Expr, ExprStmt, ModuleItem, Stmt};
-use swc_ecma_ext_transforms::jest;
+// use swc_ecma_ext_transforms::jest;
 pub use swc_ecma_parser::JscTarget;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::{
@@ -263,10 +263,10 @@ impl Options {
             .skip_helper_injection(self.skip_helper_injection)
             .hygiene(!self.disable_hygiene)
             .fixer(!self.disable_fixer)
-            .preset_env(config.env)
+            // .preset_env(config.env)
             .finalize(syntax, config.module, comments);
 
-        let pass = chain!(pass, Optional::new(jest::jest(), transform.hidden.jest));
+        // let pass = chain!(pass, Optional::new(jest::jest(), transform.hidden.jest));
 
         BuiltConfig {
             minify: config.minify.unwrap_or(false),
@@ -339,7 +339,7 @@ impl Default for Rc {
     fn default() -> Self {
         Rc::Multi(vec![
             Config {
-                env: None,
+                // env: None,
                 test: None,
                 exclude: Some(FileMatcher::Regex("\\.tsx?$".into())),
                 jsc: JscConfig {
@@ -353,7 +353,7 @@ impl Default for Rc {
                 minify: None,
             },
             Config {
-                env: None,
+                // env: None,
                 test: Some(FileMatcher::Regex("\\.tsx$".into())),
                 exclude: None,
                 jsc: JscConfig {
@@ -370,7 +370,7 @@ impl Default for Rc {
                 minify: None,
             },
             Config {
-                env: None,
+                // env: None,
                 test: Some(FileMatcher::Regex("\\.ts$".into())),
                 exclude: None,
                 jsc: JscConfig {
@@ -427,8 +427,8 @@ impl Rc {
 #[derive(Debug, Default, Clone, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct Config {
-    #[serde(default)]
-    pub env: Option<swc_ecma_preset_env::Config>,
+    // #[serde(default)]
+    // pub env: Option<swc_ecma_preset_env::Config>,
 
     #[serde(default)]
     pub test: Option<FileMatcher>,
@@ -598,8 +598,8 @@ pub struct TransformConfig {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct HiddenTransformConfig {
-    #[serde(default)]
-    pub jest: bool,
+    // #[serde(default)]
+    // pub jest: bool,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -753,15 +753,15 @@ impl Merge for Config {
         self.jsc.merge(&from.jsc);
         self.module.merge(&from.module);
         self.minify.merge(&from.minify);
-        self.env.merge(&from.env);
+        // self.env.merge(&from.env);
     }
 }
 
-impl Merge for swc_ecma_preset_env::Config {
-    fn merge(&mut self, from: &Self) {
-        *self = from.clone();
-    }
-}
+// impl Merge for swc_ecma_preset_env::Config {
+//     fn merge(&mut self, from: &Self) {
+//         *self = from.clone();
+//     }
+// }
 
 impl Merge for JscConfig {
     fn merge(&mut self, from: &Self) {

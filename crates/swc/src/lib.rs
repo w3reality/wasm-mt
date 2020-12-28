@@ -1,5 +1,7 @@
 #![deny(unused)]
 
+pub mod prelude;
+
 pub use sourcemap;
 
 pub use crate::builder::PassBuilder;
