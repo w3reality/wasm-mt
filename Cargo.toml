@@ -58,6 +58,7 @@ members = [
   "examples/fib",
   "tests/crates/node",  # WIP: add NodeJS compatibility in atw.rs
   "tests/crates/web",
+  "crates/swc",
   "crates/pool",
   "crates/pool/examples/pool_exec",
   "crates/pool/examples/http",
@@ -67,6 +68,7 @@ members = [
 
 [patch.crates-io]
 wasm-mt = { path = '.' }
+wasm-mt-swc = { path = 'crates/swc' }
 wasm-mt-test = { path = 'crates/test' }
 wasm-mt-pool = { path = 'crates/pool' }
 wasm-mt-pool-test = { path = 'crates/pool/crates/test' }
