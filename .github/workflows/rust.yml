@@ -11,12 +11,13 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
-    - name: install rustup
+    - name: Install rustup
       run: |
         curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
         rustup toolchain install nightly
         rustup target add wasm32-unknown-unknown --toolchain nightly
         rustup default nightly
+    - name: Install wasm-pack
+      run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Run test
-      run: |
-        make ci
+      run: make ci
