@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  macos-latest:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: install rustup
+      run: |
+        curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
+        rustup toolchain install nightly
+        rustup target add wasm32-unknown-unknown --toolchain nightly
+        rustup default nightly
+    - name: Run test
+      run: |
+        make ci
