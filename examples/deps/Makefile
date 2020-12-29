@@ -7,7 +7,9 @@ wasm:
 	$(WASM_PACK_BUILD) --target no-modules
 
 test:
-	wasm-pack test --headless --firefox
+	WASM_BINDGEN_TEST_TIMEOUT=60 wasm-pack test --headless --chrome
+ci:
+	wasm-pack test --headless --chrome --release
 
 clean:
 	rm -rf ./pkg/*

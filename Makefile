@@ -7,20 +7,23 @@ readme:
 test: test-mt test-mt-units test-mt-examples \
 	test-pool test-pool-units test-pool-examples
 
+# 'test' or 'ci'
+TARGET ?= test
+
 test-mt:
-	make -C tests/crates
+	make -C tests/crates $(TARGET)
 test-mt-units:
-	wasm-pack test . --headless --firefox -- --lib  # https://rustwasm.github.io/wasm-pack/book/commands/test.html
+	make -f units.mk $(TARGET)
 test-mt-examples:
-	make -C examples/parallel test
-	make -C examples/fib test
+	make -C examples/parallel $(TARGET)
+	make -C examples/fib $(TARGET)
 
 test-pool:
-	make -C crates/pool/tests/crates
+	make -C crates/pool/tests/crates $(TARGET)
 test-pool-units:
-	wasm-pack test crates/pool --headless --firefox -- --lib
+	make -C crates/pool -f units.mk $(TARGET)
 test-pool-examples:
-	make -C crates/pool/examples/http test
+	make -C crates/pool/examples/http $(TARGET)
 
 
 build: build-mt-examples build-pool-examples
