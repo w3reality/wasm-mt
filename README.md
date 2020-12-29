@@ -38,6 +38,7 @@ Note, however, that `wasm-mt` has some remarkable limitations compared to the on
 
 - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) developers
 - [@alecmocatta](https://github.com/alecmocatta) for the [serde_traitobject](https://github.com/alecmocatta/serde_traitobject) crate
+- [swc-project](https://github.com/swc-project) that facilitates the wasm-mt-test crate
 
 # Getting started
 

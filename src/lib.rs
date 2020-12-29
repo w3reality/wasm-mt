@@ -15,13 +15,13 @@
 //!
 //! #### Background and implementation
 //!
-//! The preceding seminal work entitled ["Multithreading Rust and Wasm"](https://rustwasm.github.io/2018/10/24/multithreading-rust-and-wasm.html) by [@alexcrichton](https://github.com/alexcrichton) centers on [*Web Workers*](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), *shared memory*, and [the WebAssembly threads proposal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Overview.md). Shared memory is built on top of [`SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) whose [availability across major browsers](https://caniuse.com/#feat=sharedarraybuffer) has been, unfortunately until today, rather limited and would continue to be. Also, the rust-wasm thread implementation work, along with the threads proposal, is still in progress.
+//! The preceding seminal work entitled ["Multithreading Rust and Wasm"](https://rustwasm.github.io/2018/10/24/multithreading-rust-and-wasm.html) by [@alexcrichton](https://github.com/alexcrichton) centers on [*Web Workers*](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), *shared memory*, and [the WebAssembly threads proposal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Overview.md). Shared memory is built on top of [`SharedArrayBuffer`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) whose [availability across major browsers](https://caniuse.com/#feat=sharedarraybuffer) has been somewhat limited. Also, the rust-wasm thread implementation work, along with the threads proposal, seems still in progress.
 //!
-//! On the contrary, Web Worker based multithreading in JavaScript is a quite [mature topic](https://caniuse.com/#feat=webworkers). After experimenting, we have come up to a Rust ergonomic multithreading solution that does not require `SharedArrayBuffer`. It just works across all major browsers today. We named it `wasm-mt`.
+//! On the contrary, Web Worker based multithreading in JavaScript has been [well supported for a long time](https://caniuse.com/#feat=webworkers). After experimenting, we have come up to a Rust ergonomic multithreading solution that does not require `SharedArrayBuffer`. It just works across all major browsers today and we named it `wasm-mt`.
 //!
-//! Internally, we use the [`postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage) Web Worker API (through bindings provided by [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen)) to initialize spawned threads. And, importantly, we use it again for dynamically sending Rust closures (serialized by [`serde_traitobject`](https://github.com/alecmocatta/serde_traitobject)) to the spawned threads. The parent thread can `await` the results of the closures executed in the spawned thread. Moreover, we have found that this approach is highly flexible for extension; for example, it is straightforward to augment `WasmMt::Thread` to support more customized inter-thread communication patterns.
+//! Internally, we use the [`postMessage()`](https://developer.mozilla.org/en-US/docs/Web/API/Worker/postMessage) Web Worker API (through bindings provided by [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen)) to initialize spawned threads. And, importantly, we keep using `postMessage()` for dynamically sending Rust closures (serialized by [`serde_traitobject`](https://github.com/alecmocatta/serde_traitobject)) to the spawned threads. By doing so, the parent thread can `await` the results of the closures executed in the spawned thread. We have found that this approach is highly flexible for extension, too. For example, it is straightforward to augment `WasmMt::Thread` to support more customized inter-thread communication patterns.
 //!
-//! Note, however, that `wasm-mt` is by no means a replacement of the ongoing shared memory based multithreading work led by `wasm-bindgen`. Comparatively, `wasm-mt` is not efficient in that it does **not include** support of the standard thread primitive operations:
+//! Note, however, that `wasm-mt` has some remarkable limitations compared to the ongoing shared memory based multithreading work led by `wasm-bindgen`. `wasm-mt` is not efficient in that it does **not include** support of the standard thread primitive operations:
 //!
 //! - shared memory based message passing and mutexes,
 //! - atomic instructions and efficient memory handling per [the threads proposal](https://github.com/WebAssembly/threads/blob/master/proposals/threads/Overview.md).
@@ -30,6 +30,7 @@
 //!
 //! - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) developers
 //! - [@alecmocatta](https://github.com/alecmocatta) for the [serde_traitobject](https://github.com/alecmocatta/serde_traitobject) crate
+//! - [swc-project](https://github.com/swc-project) that facilitates the wasm-mt-test crate
 //!
 //! # Getting started
 //!
