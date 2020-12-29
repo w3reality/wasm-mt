@@ -9,6 +9,8 @@ test: test-mt test-mt-units test-mt-examples \
 
 # 'test' or 'ci'
 TARGET ?= test
+ci:
+	TARGET=ci make test
 
 test-mt:
 	make -C tests/crates $(TARGET)
