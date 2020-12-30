@@ -1,4 +1,4 @@
-//! A thread pool library based on [`wasm-mt`](https://crates.io/crates/wasm-mt).
+//! A thread pool library based on `wasm-mt` ([github](https://github.com/w3reality/wasm-mt) | [crate](https://crates.io/crates/wasm-mt)).
 //!
 //! #### Examples
 //!
