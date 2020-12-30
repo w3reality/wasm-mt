@@ -7,16 +7,29 @@ on:
     branches: [ master ]
 
 jobs:
-  macos-latest:
-    runs-on: macos-latest
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [macos, linux]
+        include:
+          - build: macos
+            os: macos-latest
+            rust: nightly
+            target: wasm32-unknown-unknown
+          - build: linux
+            os: ubuntu-latest
+            rust: nightly
+            target: wasm32-unknown-unknown
     steps:
     - uses: actions/checkout@v1
     - name: Install rustup
       run: |
         curl -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal
-        rustup toolchain install nightly
-        rustup target add wasm32-unknown-unknown --toolchain nightly
-        rustup default nightly
+        rustup toolchain install ${{ matrix.rust }}
+        rustup target add ${{ matrix.target }} --toolchain ${{ matrix.rust }}
+        rustup default ${{ matrix.rust }}
     - name: Install wasm-pack
       run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
     - name: Run test
