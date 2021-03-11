@@ -43,6 +43,7 @@ features = [
   'console',
   'MessageEvent',
   'Response',
+  'TextDecoder',
   'TextEncoder',
   'Url',
   'Window',

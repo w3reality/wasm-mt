@@ -185,7 +185,7 @@
 
 use wasm_bindgen::prelude::*;
 use js_sys::{ArrayBuffer, Object, Reflect};
-use web_sys::TextEncoder;
+use web_sys::{TextDecoder, TextEncoder};
 use std::cell::RefCell;
 
 pub mod prelude;
@@ -242,8 +242,23 @@ impl WasmMt {
         }
     }
 
+    pub fn new_with_arraybuffers(ab_js: ArrayBuffer, ab_wasm: ArrayBuffer) -> Self {
+        let ab_init = Self::ab_init_from(&TextDecoder::new().unwrap()
+            .decode_with_buffer_source(&ab_js).unwrap());
+
+        Self {
+            pkg_js_uri: String::from(""),
+            ab_init: RefCell::new(Some(ab_init)),
+            ab_wasm: RefCell::new(Some(ab_wasm)),
+        }
+    }
+
     pub fn set_ab_init(&self, ab: ArrayBuffer) {
         self.ab_init.replace(Some(ab));
+    }
+
+    pub fn set_ab_wasm(&self, ab: ArrayBuffer) {
+        self.ab_wasm.replace(Some(ab));
     }
 
     pub async fn init(&self) -> Result<&Self, JsValue> {
@@ -252,8 +267,7 @@ impl WasmMt {
 
             format!("{}_bg.wasm", &self.pkg_js_uri)
         } else {
-            let ab_init = Self::create_ab_init(&self.pkg_js_uri).await?;
-            self.set_ab_init(ab_init);
+            self.set_ab_init(Self::create_ab_init(&self.pkg_js_uri).await?);
 
             self.pkg_js_uri.replace(".js", "_bg.wasm")
         };
@@ -261,8 +275,7 @@ impl WasmMt {
         if !pkg_wasm_uri.ends_with("_bg.wasm") {
             wasm_bindgen::throw_str("failed to resolve `pkg_wasm_uri`");
         }
-        let ab_wasm = utils::fetch_as_arraybuffer(&pkg_wasm_uri).await?;
-        self.ab_wasm.replace(Some(ab_wasm));
+        self.set_ab_wasm(utils::fetch_as_arraybuffer(&pkg_wasm_uri).await?);
 
         Ok(self)
     }
@@ -279,20 +292,23 @@ impl WasmMt {
             self.ab_wasm.borrow().as_ref().unwrap().slice(0))
     }
 
-    async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
-        let pkg_js = utils::fetch_as_text(pkg_js_uri).await?;
-        // debug_ln!("pkg_js: {}", &pkg_js);
-
+    fn ab_init_from(pkg_js: &str) -> ArrayBuffer {
         let mut init_js = String::new();
         init_js.push_str("return () => { ");
         init_js.push_str(&pkg_js);
         init_js.push_str(" return wasm_bindgen; };");
         // debug_ln!("init_js: {}", init_js);
 
-        let ab_init = utils::u8arr_from_vec(
-            &TextEncoder::new()?.encode_with_input(&init_js)).buffer();
+        utils::u8arr_from_vec(
+            &TextEncoder::new().unwrap().encode_with_input(&init_js))
+            .buffer()
+    }
 
-        Ok(ab_init)
+    async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
+        let pkg_js = utils::fetch_as_text(pkg_js_uri).await?;
+        // debug_ln!("pkg_js: {}", &pkg_js);
+
+        Ok(Self::ab_init_from(&pkg_js))
     }
 }
 
