@@ -1,6 +1,6 @@
 [package]
 name = "wasm-mt-swc"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["The wasm-mt Developers", "강동윤 <kdy1997.dev@gmail.com>"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
@@ -30,11 +30,11 @@ regex = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sourcemap = "6"
-swc_atoms = "0.2.5"
-swc_common = { version = "0.10.7", features = ["sourcemap", "concurrent"] }
-swc_ecma_ast = "0.36.0"
-swc_ecma_codegen = "0.42.0"
-swc_ecma_parser = "0.44.0"
-swc_ecma_transforms = { version = "0.31.0", features = ["const-modules", "react"] }
-swc_ecma_visit = "0.22.0"
-swc_visit = "0.2.2"
+swc_atoms = "=0.2.5"
+swc_common = { version = "=0.10.7", features = ["sourcemap", "concurrent"] }
+swc_ecma_ast = "=0.36.0"
+swc_ecma_codegen = "=0.42.0"
+swc_ecma_parser = "=0.44.0"
+swc_ecma_transforms = { version = "=0.31.0", features = ["const-modules", "react"] }
+swc_ecma_visit = "=0.22.0"
+swc_visit = "=0.2.2"
