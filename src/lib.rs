@@ -30,7 +30,7 @@
 //!
 //! - [wasm-bindgen](https://github.com/rustwasm/wasm-bindgen) developers
 //! - [@alecmocatta](https://github.com/alecmocatta) for the [serde_traitobject](https://github.com/alecmocatta/serde_traitobject) crate
-//! - [swc-project](https://github.com/swc-project) that facilitates the wasm-mt-test crate
+//! - [swc-project](https://github.com/swc-project) that facilitates the [wasm-mt-test](https://github.com/w3reality/wasm-mt/tree/master/crates/test) crate
 //!
 //! # Getting started
 //!
@@ -143,14 +143,14 @@
 //! Then, here's the executors in action. Note, in the latter case, we are using [`wasm_bindgen_futures::spawn_local`](https://rustwasm.github.io/wasm-bindgen/api/wasm_bindgen_futures/fn.spawn_local.html) to dispatch the threads in parallel.
 //!
 //! ```rust
-//! console_ln!("🔥 serial executor:");
+//! console_ln!("🚀 serial executor:");
 //! for th in &v {
 //!     console_ln!("starting a thread");
 //!     let ans = exec!(th, move || Ok(JsValue::from(42))).await?;
 //!     console_ln!("ans: {:?}", ans);
 //! }
 //!
-//! console_ln!("🔥 parallel executor:");
+//! console_ln!("🚀 parallel executor:");
 //! for th in v {
 //!     spawn_local(async move {
 //!         console_ln!("starting a thread");
@@ -163,7 +163,7 @@
 //! Observe the starting/ending timing of each thread in the developer console:
 //!
 //! ```text
-//! 🔥 serial executor:
+//! 🚀 serial executor:
 //! starting a thread
 //! ans: JsValue(42)
 //! starting a thread
@@ -172,7 +172,7 @@
 //! ans: JsValue(42)
 //! starting a thread
 //! ans: JsValue(42)
-//! 🔥 parallel executor:
+//! 🚀 parallel executor:
 //! (4) starting a thread
 //! (4) ans: JsValue(42)
 //! ```
