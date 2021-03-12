@@ -64,7 +64,7 @@ impl _Worker {
             _ => {
                 let msg = format!("unknown task: {}", name);
                 debug_ln!("err: {}", &msg);
-                panic!(msg);
+                panic!("{}", msg);
             },
         }
     }
