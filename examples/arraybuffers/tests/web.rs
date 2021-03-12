@@ -5,5 +5,5 @@ wasm_bindgen_test_configure!(run_in_browser);
 
 #[wasm_bindgen_test]
 async fn app_arraybuffers() {
-    arraybuffers::run().await.unwrap();
+    arraybuffers::run(true).await.unwrap();
 }
