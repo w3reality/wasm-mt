@@ -1,7 +1,6 @@
 [package]
 name = "wasm-mt"
-#version = "0.1.1-dev.0"
-version = "0.1.0"  # !!!! TEMP: workaround version mismatch on `mk test-mt`
+version = "0.1.1" # -dev.1
 authors = ["The wasm-mt Developers"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
@@ -58,6 +57,7 @@ members = [
   "examples/executors",
   "examples/parallel",
   "examples/fib",
+  "examples/arraybuffers",
   "tests/crates/node",  # WIP: add NodeJS compatibility in atw.rs
   "tests/crates/web",
   "crates/swc",

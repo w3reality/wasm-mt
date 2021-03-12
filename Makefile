@@ -19,6 +19,7 @@ test-mt-units:
 test-mt-examples:
 	make -C examples/parallel $(TARGET)
 	make -C examples/fib $(TARGET)
+	make -C examples/arraybuffers $(TARGET)
 
 test-pool:
 	make -C crates/pool/tests/crates $(TARGET)
