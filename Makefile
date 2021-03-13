@@ -27,6 +27,7 @@ test-pool-units:
 	make -C crates/pool -f units.mk $(TARGET)
 test-pool-examples:
 	make -C crates/pool/examples/http $(TARGET)
+	make -C crates/pool/examples/pool_arraybuffers $(TARGET)
 
 
 build: build-mt-examples build-pool-examples

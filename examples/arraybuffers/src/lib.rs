@@ -3,7 +3,7 @@
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::spawn_local;
 use wasm_mt::prelude::*;
-use wasm_mt::utils::{console_ln, fetch_as_arraybuffer, run_js};
+use wasm_mt::utils::{console_ln, fetch_as_arraybuffer, resolve_pkg_uri};
 
 #[wasm_bindgen]
 pub fn app() {
@@ -13,14 +13,7 @@ pub fn app() {
 }
 
 pub async fn run(is_test: bool) -> Result<(), JsValue> {
-    let mut href = run_js("return location.href;")?.as_string().unwrap();
-
-    let pkg_uri = if href.contains("index.html") {
-        href.replace("index.html", "pkg")
-    } else {
-        href.push_str("/pkg");
-        href
-    };
+    let pkg_uri = resolve_pkg_uri()?;
     console_ln!("pkg_uri: {}", pkg_uri);
 
     let mt = WasmMt::new_with_arraybuffers(

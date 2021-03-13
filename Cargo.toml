@@ -1,6 +1,6 @@
 [package]
 name = "wasm-mt"
-version = "0.1.1" # -dev.1
+version = "0.1.1"
 authors = ["The wasm-mt Developers"]
 license = "MIT/Apache-2.0"
 readme = "README.md"
@@ -64,6 +64,7 @@ members = [
   "crates/pool",
   "crates/pool/examples/pool_exec",
   "crates/pool/examples/http",
+  "crates/pool/examples/pool_arraybuffers",
 #  "crates/pool/tests/crates/node",  # WIP
   "crates/pool/tests/crates/web",
 ]

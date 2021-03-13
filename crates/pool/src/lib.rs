@@ -6,6 +6,7 @@
 //!
 //! - **pool_exec** - How to use <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/pool_exec/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/pool_exec) ]
 //! - **http** - A multithreaded server based on <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/http/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/http) ]
+//! - **pool_arraybuffers** - Demo of using <code>ThreadPool::new_with_arraybuffers()</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/pool_arraybuffers/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/pool_arraybuffers) ]
 //!
 //! # Getting started
 //!
@@ -36,7 +37,7 @@
 //!
 //! let num = 4;
 //!
-//! console_ln!("a) 🔥 pool_exec! {} closures:", num);
+//! console_ln!("a) 💦 pool_exec! {} closures:", num);
 //! for _ in 0..num {
 //!     pool_exec!(pool, move || {
 //!         console_ln!("a) closure: done.");
@@ -44,7 +45,7 @@
 //!     });
 //! }
 //!
-//! console_ln!("b) 🔥 pool_exec! {} async closures:", num);
+//! console_ln!("b) 💦 pool_exec! {} async closures:", num);
 //! for _ in 0..num {
 //!     pool_exec!(pool, async move || {
 //!         sleep(1000).await;
@@ -57,7 +58,7 @@
 //!     console_ln!("callback: result: {:?}", result);
 //! };
 //!
-//! console_ln!("c) 🔥 pool_exec! {} closures with callback:", num);
+//! console_ln!("c) 💦 pool_exec! {} closures with callback:", num);
 //! for _ in 0..num {
 //!     pool_exec!(pool, move || {
 //!         console_ln!("c) closure: done.");
@@ -65,7 +66,7 @@
 //!     }, cb);
 //! }
 //!
-//! console_ln!("d) 🔥 pool_exec! {} async closures with callback:", num);
+//! console_ln!("d) 💦 pool_exec! {} async closures with callback:", num);
 //! for _ in 0..num {
 //!     pool_exec!(pool, async move || {
 //!         sleep(1000).await;
@@ -111,6 +112,16 @@ impl ThreadPoolInner {
         Self {
             size,
             mt: WasmMt::new(pkg_js_uri),
+            threads: RefCell::new(Vec::with_capacity(size)),
+            resolver: Resolver::new(),
+        }
+    }
+
+    fn new_with_arraybuffers(size: usize, ab_js: ArrayBuffer, ab_wasm: ArrayBuffer) -> Self {
+        assert!(size > 0);
+        Self {
+            size,
+            mt: WasmMt::new_with_arraybuffers(ab_js, ab_wasm),
             threads: RefCell::new(Vec::with_capacity(size)),
             resolver: Resolver::new(),
         }
@@ -207,6 +218,10 @@ impl Drop for ThreadPool {
 impl ThreadPool {
     pub fn new(size: usize, pkg_js_uri: &str) -> Self {
         Self(Rc::new(ThreadPoolInner::new(size, pkg_js_uri)))
+    }
+
+    pub fn new_with_arraybuffers(size: usize, ab_js: ArrayBuffer, ab_wasm: ArrayBuffer) -> Self {
+        Self(Rc::new(ThreadPoolInner::new_with_arraybuffers(size, ab_js, ab_wasm)))
     }
 
     pub fn set_ab_init(&self, ab: ArrayBuffer) {

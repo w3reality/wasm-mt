@@ -12,6 +12,7 @@
 //! - **fib** - Computing a Fibonacci sequence with nested threads. [ [live](https://w3reality.github.io/wasm-mt/examples/fib/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/fib) ]
 //! - **executors** - Minimal serial/parallel executors using <code>wasm_mt</code>. [ [live](https://w3reality.github.io/wasm-mt/examples/executors/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/executors) ]
 //! - **parallel** - Julia set benchmark of serial/parallel executors. [ [live](https://w3reality.github.io/wasm-mt/examples/parallel/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/parallel) ]
+//! - **arraybuffers** - Demo of using <code>WasmMt::new_with_arraybuffers()</code>. [ [live](https://w3reality.github.io/wasm-mt/examples/arraybuffers/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/examples/arraybuffers) ]
 //!
 //! #### Background and implementation
 //!
@@ -235,6 +236,8 @@ pub struct WasmMt {
 impl WasmMt {
     pub fn new(pkg_js_uri: &str) -> Self {
         debug_ln!("pkg_js_uri: {}", pkg_js_uri);
+        assert!(!pkg_js_uri.is_empty(), "Passing empty `pkg_js_uri` is not allowed.");
+
         Self {
             pkg_js_uri: String::from(pkg_js_uri),
             ab_init: RefCell::new(None),
@@ -262,6 +265,11 @@ impl WasmMt {
     }
 
     pub async fn init(&self) -> Result<&Self, JsValue> {
+        if self.pkg_js_uri.is_empty() {
+            debug_ln!("init(): `pkg_js_uri` is empty; should be using `new_with_arraybuffers()`");
+            return Ok(self);
+        }
+
         let pkg_wasm_uri = if self.pkg_js_uri.ends_with("wasm-bindgen-test") {
             // We defer updating `self.ab_init` in this 'test' context
 

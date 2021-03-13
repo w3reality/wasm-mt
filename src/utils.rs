@@ -107,3 +107,14 @@ pub async fn sleep(ms: u32) {
         await (ms => new Promise((res, rej) => setTimeout(res, ms)))({});
     ", ms).as_str()).await.unwrap();
 }
+
+pub fn resolve_pkg_uri() -> Result<String, JsValue> {
+    let mut href = run_js("return location.href;")?.as_string().unwrap();
+    let pkg_uri = if href.contains("index.html") {
+        href.replace("index.html", "pkg")
+    } else {
+        href.push_str("/pkg");
+        href
+    };
+    Ok(pkg_uri)
+}
