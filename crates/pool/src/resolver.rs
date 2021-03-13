@@ -38,7 +38,7 @@ impl Resolver {
                 if !pth.get_busy() {
                     let msg = "[resolver] the resolved thread is in illegal state";
                     debug_ln!("calling `panic!()`: {}", msg);
-                    panic!(msg);
+                    panic!("{}", msg);
                 }
 
                 Ok(pth)
