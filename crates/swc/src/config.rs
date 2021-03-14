@@ -29,8 +29,8 @@ use swc_ecma_transforms::{
 };
 use swc_ecma_visit::Fold;
 
-#[cfg(test)]
-mod tests;
+// #[cfg(test)]
+// mod tests;
 
 #[derive(Default, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
