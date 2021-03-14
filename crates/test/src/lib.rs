@@ -2,8 +2,9 @@
 
 #![feature(async_closure)]
 
-use wasm_mt::{WasmMt, utils};
+use wasm_mt::WasmMt;
 // use wasm_mt::console_ln;
+use wasm_mt::utils::{ab_from_text, fetch_as_arraybuffer, fetch_as_text, run_js};
 use wasm_bindgen::prelude::*;
 use js_sys::ArrayBuffer;
 
@@ -12,9 +13,21 @@ use transform::swc_transform;
 
 // Per crates/web only; TODO generalize for crates/node
 
-pub fn get_pkg_js_uri() -> String {
-    let href = utils::run_js("return location.href;").unwrap().as_string().unwrap();
+pub fn get_pkg_js_uri() -> String { // e.g. http://127.0.0.1:8000/wasm-bindgen-test
+    let href = run_js("return location.href;").unwrap().as_string().unwrap();
     format!("{}wasm-bindgen-test", href)
+}
+
+pub async fn get_arraybuffers() -> Result<(ArrayBuffer, ArrayBuffer), JsValue> {
+    let pkg_js_uri = get_pkg_js_uri();
+    let pkg_wasm_uri = format!("{}_bg.wasm", pkg_js_uri);
+
+    let ab_js = ab_from_text(
+        &pkg_js_no_modules_from(
+            &fetch_as_text(&pkg_js_uri).await?));
+    let ab_wasm = fetch_as_arraybuffer(&pkg_wasm_uri).await?;
+
+    Ok((ab_js, ab_wasm))
 }
 
 pub fn pkg_js_no_modules_from(pkg_js: &str) -> String {
@@ -34,7 +47,7 @@ pub async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
     // console_ln!("output: {:?}", output);
     // assert!(output.unwrap().starts_with("\"use strict\""));
 
-    let pkg_js = utils::fetch_as_text(pkg_js_uri).await?;
+    let pkg_js = fetch_as_text(pkg_js_uri).await?;
     let pkg_js = pkg_js.replace("import.meta.url", "''"); // workaround
     let pkg_js = swc_transform(&pkg_js).unwrap();
 
@@ -50,7 +63,7 @@ pub async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
         };
     ");
 
-    Ok(utils::ab_from_text(&init_js))
+    Ok(ab_from_text(&init_js))
 }
 
 pub async fn create_mt(pkg_js_uri: &str) -> WasmMt {
