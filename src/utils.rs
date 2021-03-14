@@ -119,6 +119,7 @@ pub async fn sleep(ms: u32) {
     ", ms).as_str()).await.unwrap();
 }
 
+// deprecated; being removed
 pub fn resolve_pkg_uri() -> Result<String, JsValue> {
     let mut href = run_js("return location.href;")?.as_string().unwrap();
     let pkg_uri = if href.contains("index.html") {

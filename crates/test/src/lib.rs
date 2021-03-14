@@ -35,15 +35,8 @@ pub async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
     // assert!(output.unwrap().starts_with("\"use strict\""));
 
     let pkg_js = utils::fetch_as_text(pkg_js_uri).await?;
-    // console_ln!("pkg_js: {}", &pkg_js);
-
-    // `import.meta` workaround
-    let pkg_js = pkg_js.replace("import.meta.url", "''");
-    // console_ln!("pkg_js.len(): {}", pkg_js.len());
-
+    let pkg_js = pkg_js.replace("import.meta.url", "''"); // workaround
     let pkg_js = swc_transform(&pkg_js).unwrap();
-    // console_ln!("(transformed) pkg_js: {}", &pkg_js);
-    // console_ln!("(transformed) pkg_js.len(): {}", pkg_js.len());
 
     let mut init_js = String::new();
     // init_js.push_str(&fix_nodejs); // TODO in case of tests/crates/node
@@ -56,7 +49,6 @@ pub async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
             return Object.assign(init, exports);
         };
     ");
-    // console_ln!("init_js: {}", init_js);
 
     Ok(utils::ab_from_text(&init_js))
 }
