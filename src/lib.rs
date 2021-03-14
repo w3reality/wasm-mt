@@ -186,7 +186,6 @@
 
 use wasm_bindgen::prelude::*;
 use js_sys::{ArrayBuffer, Object, Reflect};
-use web_sys::{TextDecoder, TextEncoder};
 use std::cell::RefCell;
 
 pub mod prelude;
@@ -246,8 +245,7 @@ impl WasmMt {
     }
 
     pub fn new_with_arraybuffers(ab_js: ArrayBuffer, ab_wasm: ArrayBuffer) -> Self {
-        let ab_init = Self::ab_init_from(&TextDecoder::new().unwrap()
-            .decode_with_buffer_source(&ab_js).unwrap());
+        let ab_init = Self::ab_init_from(&utils::text_from_ab(&ab_js).unwrap());
 
         Self {
             pkg_js_uri: String::from(""),
@@ -305,16 +303,12 @@ impl WasmMt {
         init_js.push_str("return () => { ");
         init_js.push_str(&pkg_js);
         init_js.push_str(" return wasm_bindgen; };");
-        // debug_ln!("init_js: {}", init_js);
 
-        utils::u8arr_from_vec(
-            &TextEncoder::new().unwrap().encode_with_input(&init_js))
-            .buffer()
+        utils::ab_from_text(&init_js)
     }
 
     async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
         let pkg_js = utils::fetch_as_text(pkg_js_uri).await?;
-        // debug_ln!("pkg_js: {}", &pkg_js);
 
         Ok(Self::ab_init_from(&pkg_js))
     }

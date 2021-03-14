@@ -3,7 +3,8 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::JsFuture;
 use wasm_bindgen::JsCast;
 use js_sys::{ArrayBuffer, Function, Promise, Uint8Array};
-use web_sys::Response;
+use web_sys::{Response, TextDecoder, TextEncoder};
+
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use std::cell::RefCell;
 
@@ -46,6 +47,16 @@ pub fn u8arr_from_vec(vec: &[u8]) -> Uint8Array {
 
 pub fn ab_dup(ab: &ArrayBuffer) -> ArrayBuffer {
     Uint8Array::new(ab).buffer()
+}
+
+pub fn ab_from_text(text: &str) -> ArrayBuffer {
+    u8arr_from_vec(
+        &TextEncoder::new().unwrap().encode_with_input(text))
+        .buffer()
+}
+pub fn text_from_ab(ab: &ArrayBuffer) -> Option<String> {
+    TextDecoder::new().ok()?
+        .decode_with_buffer_source(ab).ok()
 }
 
 pub async fn fetch_and_response(url: &str) -> Result<Response, JsValue> {
