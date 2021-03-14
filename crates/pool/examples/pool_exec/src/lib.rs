@@ -25,7 +25,7 @@ pub fn app() {
 async fn demo(pool: &ThreadPool) -> Result<(), JsValue> {
     let num = 4;
 
-    console_ln!("a) 🔥 pool_exec! {} closures:", num);
+    console_ln!("a) 💦 pool_exec! {} closures:", num);
     for _ in 0..num {
         pool_exec!(pool, move || {
             console_ln!("a) closure: done.");
@@ -33,7 +33,7 @@ async fn demo(pool: &ThreadPool) -> Result<(), JsValue> {
         });
     }
 
-    console_ln!("b) 🔥 pool_exec! {} async closures:", num);
+    console_ln!("b) 💦 pool_exec! {} async closures:", num);
     for _ in 0..num {
         pool_exec!(pool, async move || {
             sleep(1000).await;
@@ -46,7 +46,7 @@ async fn demo(pool: &ThreadPool) -> Result<(), JsValue> {
         console_ln!("callback: result: {:?}", result);
     };
 
-    console_ln!("c) 🔥 pool_exec! {} closures with callback:", num);
+    console_ln!("c) 💦 pool_exec! {} closures with callback:", num);
     for _ in 0..num {
         pool_exec!(pool, move || {
             console_ln!("c) closure: done.");
@@ -54,7 +54,7 @@ async fn demo(pool: &ThreadPool) -> Result<(), JsValue> {
         }, cb);
     }
 
-    console_ln!("d) 🔥 pool_exec! {} async closures with callback:", num);
+    console_ln!("d) 💦 pool_exec! {} async closures with callback:", num);
     for _ in 0..num {
         pool_exec!(pool, async move || {
             sleep(1000).await;
@@ -83,12 +83,12 @@ async fn demo_js(pool: &ThreadPool) -> Result<(), JsValue> {
         return await sub(1, 2);
     ";
 
-    console_ln!("e) 🔥 pool_exec_js!:");
+    console_ln!("e) 💦 pool_exec_js!:");
     for _ in 0..num {
         pool_exec_js!(pool, js);
     }
 
-    console_ln!("f) 🔥 pool_exec_js_async!:");
+    console_ln!("f) 💦 pool_exec_js_async!:");
     for _ in 0..num {
         pool_exec_js_async!(pool, js_async);
     }
@@ -97,12 +97,12 @@ async fn demo_js(pool: &ThreadPool) -> Result<(), JsValue> {
         console_ln!("callback: result: {:?}", result);
     };
 
-    console_ln!("g) 🔥 pool_exec_js! with callback:");
+    console_ln!("g) 💦 pool_exec_js! with callback:");
     for _ in 0..num {
         pool_exec_js!(pool, js, cb);
     }
 
-    console_ln!("h) 🔥 pool_exec_js_async! with callback:");
+    console_ln!("h) 💦 pool_exec_js_async! with callback:");
     for _ in 0..num {
         pool_exec_js_async!(pool, js_async, cb);
     }
