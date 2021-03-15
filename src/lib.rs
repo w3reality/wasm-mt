@@ -230,6 +230,7 @@ pub struct WasmMt {
     pkg_js_uri: Option<String>,
     ab_init: RefCell<Option<ArrayBuffer>>,
     ab_wasm: RefCell<Option<ArrayBuffer>>,
+    is_initialized: RefCell<bool>,
 }
 
 impl WasmMt {
@@ -240,6 +241,7 @@ impl WasmMt {
             pkg_js_uri: Some(String::from(pkg_js_uri)),
             ab_init: RefCell::new(None),
             ab_wasm: RefCell::new(None),
+            is_initialized: RefCell::new(false),
         }
     }
 
@@ -250,6 +252,7 @@ impl WasmMt {
             pkg_js_uri: None,
             ab_init: RefCell::new(Some(ab_init)),
             ab_wasm: RefCell::new(Some(ab_wasm)),
+            is_initialized: RefCell::new(false),
         }
     }
 
@@ -262,6 +265,9 @@ impl WasmMt {
     }
 
     pub async fn init(&self) -> Result<&Self, JsValue> {
+        assert!(!*self.is_initialized.borrow());
+        self.is_initialized.replace(true);
+
         if let Some(ref pkg_js_uri) = self.pkg_js_uri {
             let pkg_wasm_uri = if pkg_js_uri.ends_with("wasm-bindgen-test") {
                 // We defer updating `self.ab_init` in this 'test' context
@@ -291,6 +297,8 @@ impl WasmMt {
     }
 
     pub fn thread(&self) -> Thread {
+        assert!(*self.is_initialized.borrow());
+
         // https://rustwasm.github.io/wasm-bindgen/api/js_sys/struct.ArrayBuffer.html#method.slice
         Thread::new(
             self.ab_init.borrow().as_ref().unwrap().slice(0),
