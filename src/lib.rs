@@ -227,7 +227,7 @@ macro_rules! exec_js { ($th:expr, $str:expr) => (($th).exec_js($str)); }
 macro_rules! exec_js_async { ($th:expr, $str:expr) => (($th).exec_js_async($str)); }
 
 pub struct WasmMt {
-    pkg_js_uri: String,
+    pkg_js_uri: Option<String>,
     ab_init: RefCell<Option<ArrayBuffer>>,
     ab_wasm: RefCell<Option<ArrayBuffer>>,
 }
@@ -235,10 +235,9 @@ pub struct WasmMt {
 impl WasmMt {
     pub fn new(pkg_js_uri: &str) -> Self {
         debug_ln!("pkg_js_uri: {}", pkg_js_uri);
-        assert!(!pkg_js_uri.is_empty(), "Passing empty `pkg_js_uri` is not allowed.");
 
         Self {
-            pkg_js_uri: String::from(pkg_js_uri),
+            pkg_js_uri: Some(String::from(pkg_js_uri)),
             ab_init: RefCell::new(None),
             ab_wasm: RefCell::new(None),
         }
@@ -248,7 +247,7 @@ impl WasmMt {
         let ab_init = Self::ab_init_from(&utils::text_from_ab(&ab_js).unwrap());
 
         Self {
-            pkg_js_uri: String::from(""),
+            pkg_js_uri: None,
             ab_init: RefCell::new(Some(ab_init)),
             ab_wasm: RefCell::new(Some(ab_wasm)),
         }
@@ -263,25 +262,25 @@ impl WasmMt {
     }
 
     pub async fn init(&self) -> Result<&Self, JsValue> {
-        if self.pkg_js_uri.is_empty() {
-            debug_ln!("init(): `pkg_js_uri` is empty; should be using `new_with_arraybuffers()`");
-            return Ok(self);
-        }
+        if let Some(ref pkg_js_uri) = self.pkg_js_uri {
+            let pkg_wasm_uri = if pkg_js_uri.ends_with("wasm-bindgen-test") {
+                // We defer updating `self.ab_init` in this 'test' context
+                format!("{}_bg.wasm", pkg_js_uri)
+            } else {
+                self.set_ab_init(Self::create_ab_init(pkg_js_uri).await?);
+                pkg_js_uri.replace(".js", "_bg.wasm")
+            };
 
-        let pkg_wasm_uri = if self.pkg_js_uri.ends_with("wasm-bindgen-test") {
-            // We defer updating `self.ab_init` in this 'test' context
+            if !pkg_wasm_uri.ends_with("_bg.wasm") {
+                wasm_bindgen::throw_str("failed to resolve `pkg_wasm_uri`");
+            }
 
-            format!("{}_bg.wasm", &self.pkg_js_uri)
+            self.set_ab_wasm(utils::fetch_as_arraybuffer(&pkg_wasm_uri).await?);
         } else {
-            self.set_ab_init(Self::create_ab_init(&self.pkg_js_uri).await?);
-
-            self.pkg_js_uri.replace(".js", "_bg.wasm")
-        };
-
-        if !pkg_wasm_uri.ends_with("_bg.wasm") {
-            wasm_bindgen::throw_str("failed to resolve `pkg_wasm_uri`");
+            debug_ln!("init(): `pkg_js_uri` is `None`; should be using `new_with_arraybuffers()`");
+            assert!(self.ab_init.borrow().is_some());
+            assert!(self.ab_wasm.borrow().is_some());
         }
-        self.set_ab_wasm(utils::fetch_as_arraybuffer(&pkg_wasm_uri).await?);
 
         Ok(self)
     }
