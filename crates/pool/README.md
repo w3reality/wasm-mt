@@ -25,6 +25,7 @@ You can run all the following apps in browser!
 
 - **pool_exec** - How to use <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/pool_exec/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/pool_exec) ]
 - **http** - A multithreaded server based on <code>wasm_mt_pool</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/http/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/http) ]
+- **pool_arraybuffers** - Demo of using <code>ThreadPool::new_with_arraybuffers()</code>. [ [live](https://w3reality.github.io/wasm-mt/crates/pool/examples/pool_arraybuffers/index.html) | [source](https://github.com/w3reality/wasm-mt/tree/master/crates/pool/examples/pool_arraybuffers) ]
 
 # Getting started
 
@@ -55,7 +56,7 @@ let pool = ThreadPool::new(size, pkg_js).and_init().await.unwrap();
 
 let num = 4;
 
-console_ln!("a) 🔥 pool_exec! {} closures:", num);
+console_ln!("a) 💦 pool_exec! {} closures:", num);
 for _ in 0..num {
     pool_exec!(pool, move || {
         console_ln!("a) closure: done.");
@@ -63,7 +64,7 @@ for _ in 0..num {
     });
 }
 
-console_ln!("b) 🔥 pool_exec! {} async closures:", num);
+console_ln!("b) 💦 pool_exec! {} async closures:", num);
 for _ in 0..num {
     pool_exec!(pool, async move || {
         sleep(1000).await;
@@ -76,7 +77,7 @@ let cb = move |result| {
     console_ln!("callback: result: {:?}", result);
 };
 
-console_ln!("c) 🔥 pool_exec! {} closures with callback:", num);
+console_ln!("c) 💦 pool_exec! {} closures with callback:", num);
 for _ in 0..num {
     pool_exec!(pool, move || {
         console_ln!("c) closure: done.");
@@ -84,7 +85,7 @@ for _ in 0..num {
     }, cb);
 }
 
-console_ln!("d) 🔥 pool_exec! {} async closures with callback:", num);
+console_ln!("d) 💦 pool_exec! {} async closures with callback:", num);
 for _ in 0..num {
     pool_exec!(pool, async move || {
         sleep(1000).await;
