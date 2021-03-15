@@ -36,9 +36,11 @@ build-mt-examples:
 	make -C examples/executors
 	make -C examples/parallel
 	make -C examples/fib
+	make -C examples/arraybuffers
 build-pool-examples:
 	make -C crates/pool/examples/pool_exec
 	make -C crates/pool/examples/http
+	make -C crates/pool/examples/pool_arraybuffers
 
 doc: doc-mt doc-mt-test doc-pool doc-pool-test
 doc-mt:
