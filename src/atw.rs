@@ -104,6 +104,7 @@ type RrMap = HashMap<Uuid, (Function, Function)>;
 pub struct Thread {
     worker: Worker,
     _on_message: Box<Closure<dyn FnMut(MessageEvent)>>,
+    _on_error: Box<Closure<dyn FnMut(MessageEvent)>>,
     rr_map: Rc<RefCell<RrMap>>,
     is_terminated: RefCell<bool>,
 }
@@ -124,11 +125,14 @@ impl Thread {
         let rr_map = Rc::new(RefCell::new(HashMap::new()));
         let on_message = Self::create_onmessage(rr_map.clone());
         worker.set_onmessage(Some(on_message.as_ref().unchecked_ref::<Function>()));
+        let on_error = Self::create_onerror(rr_map.clone());
+        worker.set_onerror(Some(on_error.as_ref().unchecked_ref::<Function>()));
 
         Self {
             worker,
             rr_map,
             _on_message: Box::new(on_message),
+            _on_error: Box::new(on_error),
             is_terminated: RefCell::new(false),
         }
     }
@@ -153,6 +157,20 @@ impl Thread {
             (if is_ok { res } else { rej })
                 .call1(&JsValue::NULL, &result)
                 .unwrap_throw();
+        }) as Box<dyn FnMut(MessageEvent)>)
+    }
+
+    fn create_onerror(rr_map: Rc<RefCell<RrMap>>) -> Closure<dyn FnMut(MessageEvent)> {
+        Closure::wrap(Box::new(move |_me: MessageEvent| {
+            console_ln!("terminated by error");
+            let mut rr_map = rr_map.borrow_mut();
+            let cancels = rr_map.len();
+            debug_ln!("cancel_pending_requests(): canceling {} pending reqs", cancels);
+            for (req_id, (_res, rej)) in rr_map.drain() {
+                debug_ln!("canceling req: {}", &req_id);
+                rej.call1(&JsValue::NULL,
+                    &JsValue::from(&format!("Thread: req[{}] canceled", &req_id))).unwrap();
+            }
         }) as Box<dyn FnMut(MessageEvent)>)
     }
 
@@ -211,6 +229,10 @@ impl Thread {
             self.cancel_pending_requests();
             self.worker.terminate();
         }
+    }
+
+    pub fn is_terminated(&self) -> bool {
+        *self.is_terminated.borrow()
     }
 }
 
