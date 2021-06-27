@@ -64,7 +64,7 @@ impl Thread {
 
                     // This overrides `self.onmessage`
                     const _worker = wbg.wmt_bootstrap(self, id);
-
+                    
                     self.wmtContext = { wbg, wasm, _worker };
                     // console.log('bootstrap complete - self.wmtContext:', self.wmtContext);
                 } catch (e) {
@@ -148,6 +148,10 @@ impl Thread {
 
     pub fn terminate(&self) {
         self.atw_th.terminate();
+    }
+
+    pub fn is_terminated(&self) -> bool {
+        self.atw_th.is_terminated()
     }
 
     pub fn get_id(&self) -> Option<Rc<String>> {

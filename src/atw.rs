@@ -9,7 +9,7 @@ use web_sys::{MessageEvent, Worker, WorkerGlobalScope};
 use uuid::Uuid;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::cell::{Ref, RefCell};
+use std::cell::{Ref, RefCell, RefMut};
 
 fn atw_encode_req_msg(id: &Uuid, payload: &JsValue) -> Object {
     let msg = Object::new();
@@ -104,6 +104,7 @@ type RrMap = HashMap<Uuid, (Function, Function)>;
 pub struct Thread {
     worker: Worker,
     _on_message: Box<Closure<dyn FnMut(MessageEvent)>>,
+    _on_error: Box<Closure<dyn FnMut(MessageEvent)>>,
     rr_map: Rc<RefCell<RrMap>>,
     is_terminated: RefCell<bool>,
 }
@@ -124,11 +125,14 @@ impl Thread {
         let rr_map = Rc::new(RefCell::new(HashMap::new()));
         let on_message = Self::create_onmessage(rr_map.clone());
         worker.set_onmessage(Some(on_message.as_ref().unchecked_ref::<Function>()));
+        let on_error = Self::create_onerror(rr_map.clone());
+        worker.set_onerror(Some(on_error.as_ref().unchecked_ref::<Function>()));
 
         Self {
             worker,
             rr_map,
             _on_message: Box::new(on_message),
+            _on_error: Box::new(on_error),
             is_terminated: RefCell::new(false),
         }
     }
@@ -153,6 +157,12 @@ impl Thread {
             (if is_ok { res } else { rej })
                 .call1(&JsValue::NULL, &result)
                 .unwrap_throw();
+        }) as Box<dyn FnMut(MessageEvent)>)
+    }
+
+    fn create_onerror(rr_map: Rc<RefCell<RrMap>>) -> Closure<dyn FnMut(MessageEvent)> {
+        Closure::wrap(Box::new(move |_me: MessageEvent| {
+            Self::cancel_pending_requests(rr_map.borrow_mut());
         }) as Box<dyn FnMut(MessageEvent)>)
     }
 
@@ -191,9 +201,7 @@ impl Thread {
         JsFuture::from(promise).await
     }
 
-    fn cancel_pending_requests(&self) {
-        let mut rr_map = self.rr_map.borrow_mut();
-
+    fn cancel_pending_requests(mut rr_map: RefMut<RrMap>) {
         let cancels = rr_map.len();
         debug_ln!("cancel_pending_requests(): canceling {} pending reqs", cancels);
         for (req_id, (_res, rej)) in rr_map.drain() {
@@ -208,9 +216,13 @@ impl Thread {
             debug_ln!("Thread::terminate(): nop; already terminated");
         } else {
             self.is_terminated.replace(true);
-            self.cancel_pending_requests();
+            Self::cancel_pending_requests(self.rr_map.borrow_mut());
             self.worker.terminate();
         }
+    }
+
+    pub fn is_terminated(&self) -> bool {
+        *self.is_terminated.borrow()
     }
 }
 
