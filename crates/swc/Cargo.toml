@@ -35,7 +35,8 @@ swc_common = { version = "=0.10.7", features = ["sourcemap", "concurrent"] }
 swc_ecma_ast = "=0.36.0"
 swc_ecma_codegen = "=0.42.0"
 swc_ecma_parser = "=0.44.0"
-swc_ecma_transforms = { version = "=0.31.0", features = ["const-modules", "react"] }
+#swc_ecma_transforms = { version = "=0.31.0", features = ["const-modules", "react"] }
+swc_ecma_transforms = { version = "=0.31.0", default-features = false }  # workaround old 'dashmap' dep pulled above
 swc_ecma_transforms_macros = { version = "=0.1.1" }
 swc_ecma_visit = "=0.22.0"
 swc_visit = "=0.2.2"

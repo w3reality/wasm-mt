@@ -1,11 +1,11 @@
 use crate::config::{GlobalPassOption, JscTarget, ModuleConfig};
 use either::Either;
-use std::{collections::HashMap, sync::Arc};
-use swc_atoms::JsWord;
+use std::{/* collections::HashMap, */ sync::Arc};
+//use swc_atoms::JsWord;
 use swc_common::{chain, comments::Comments, errors::Handler, Mark, SourceMap};
 use swc_ecma_parser::Syntax;
 use swc_ecma_transforms::{
-    compat, const_modules, fixer, helpers, hygiene, modules, pass::Optional,
+    compat, /* const_modules, */ fixer, helpers, hygiene, modules, pass::Optional,
     proposals::import_assertions, typescript,
 };
 
@@ -81,13 +81,13 @@ impl<'a, 'b, P: swc_ecma_visit::Fold> PassBuilder<'a, 'b, P> {
         self
     }
 
-    pub fn const_modules(
-        self,
-        globals: HashMap<JsWord, HashMap<JsWord, String>>,
-    ) -> PassBuilder<'a, 'b, impl swc_ecma_visit::Fold> {
-        let cm = self.cm.clone();
-        self.then(const_modules(cm, globals))
-    }
+    //pub fn const_modules(
+    //    self,
+    //    globals: HashMap<JsWord, HashMap<JsWord, String>>,
+    //) -> PassBuilder<'a, 'b, impl swc_ecma_visit::Fold> {
+    //    let cm = self.cm.clone();
+    //    self.then(const_modules(cm, globals))
+    //}
 
     pub fn inline_globals(
         self,

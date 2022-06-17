@@ -21,11 +21,11 @@ pub use swc_ecma_parser::JscTarget;
 use swc_ecma_parser::{lexer::Lexer, Parser, StringInput, Syntax, TsConfig};
 use swc_ecma_transforms::{
     compat::es2020::typescript_class_properties,
-    const_modules, modules,
+    /* const_modules, */ modules,
     optimization::{inline_globals, json_parse, simplifier},
     pass::{noop, Optional},
     proposals::{decorators, export_default_from},
-    react, resolver_with_mark, typescript,
+    /* react, */ resolver_with_mark, typescript,
 };
 use swc_ecma_visit::Fold;
 
@@ -203,13 +203,13 @@ impl Options {
         let optimizer = transform.optimizer;
         let enable_optimizer = optimizer.is_some();
 
-        let const_modules = {
+        /*let const_modules = {
             let enabled = transform.const_modules.is_some();
             let config = transform.const_modules.unwrap_or_default();
 
             let globals = config.globals;
             Optional::new(const_modules(cm.clone(), globals), enabled)
-        };
+        };*/
 
         let json_parse_pass = {
             if let Some(ref cfg) = optimizer.as_ref().and_then(|v| v.jsonify) {
@@ -236,10 +236,10 @@ impl Options {
 
         let pass = chain!(
             // handle jsx
-            Optional::new(
-                react::react(cm.clone(), comments, transform.react),
-                syntax.jsx()
-            ),
+            //Optional::new(
+            //    react::react(cm.clone(), comments, transform.react),
+            //    syntax.jsx()
+            //),
             // Decorators may use type information
             Optional::new(
                 decorators(decorators::Config {
@@ -251,7 +251,7 @@ impl Options {
             Optional::new(typescript_class_properties(), syntax.typescript()),
             Optional::new(typescript::strip(), syntax.typescript()),
             resolver_with_mark(root_mark),
-            const_modules,
+            //const_modules,
             optimization,
             Optional::new(export_default_from(), syntax.export_default_from()),
             Optional::new(simplifier(Default::default()), enable_optimizer),
@@ -576,11 +576,11 @@ impl ModuleConfig {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct TransformConfig {
-    #[serde(default)]
-    pub react: react::Options,
+    //#[serde(default)]
+    //pub react: react::Options,
 
-    #[serde(default)]
-    pub const_modules: Option<ConstModulesConfig>,
+    //#[serde(default)]
+    //pub const_modules: Option<ConstModulesConfig>,
 
     #[serde(default)]
     pub optimizer: Option<OptimizerConfig>,
@@ -804,8 +804,8 @@ impl Merge for Syntax {
 impl Merge for TransformConfig {
     fn merge(&mut self, from: &Self) {
         self.optimizer.merge(&from.optimizer);
-        self.const_modules.merge(&from.const_modules);
-        self.react.merge(&from.react);
+        //self.const_modules.merge(&from.const_modules);
+        //self.react.merge(&from.react);
     }
 }
 
@@ -821,11 +821,11 @@ impl Merge for GlobalPassOption {
     }
 }
 
-impl Merge for react::Options {
-    fn merge(&mut self, from: &Self) {
-        *self = from.clone();
-    }
-}
+//impl Merge for react::Options {
+//    fn merge(&mut self, from: &Self) {
+//        *self = from.clone();
+//    }
+//}
 
 impl Merge for ConstModulesConfig {
     fn merge(&mut self, from: &Self) {
