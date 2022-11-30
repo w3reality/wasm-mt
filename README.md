@@ -64,7 +64,7 @@ Cargo.toml:
 ```toml
 wasm-mt = "0.1"
 serde = { version = "1.0", features = ["derive"] }
-serde_closure = "0.2"
+serde_closure = "0.3"
 ```
 
 # Creating a thread
