@@ -17,7 +17,7 @@ futures-channel = "0.3"
 js-sys = "0.3"
 
 serde = "1.0"
-serde_closure = "0.2"
+serde_closure = "0.3"
 
 [dependencies.web-sys]
 version = "0.3"
