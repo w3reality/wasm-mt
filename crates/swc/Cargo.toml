@@ -20,3 +20,8 @@ exclude = [
 test = false
 
 [dependencies]
+once_cell = "1"
+swc = "=0.233.2"
+swc_common = "=0.29.18"
+swc_ecma_ast = "=0.95.2"
+swc_ecma_transforms_module = "=0.154.2"
