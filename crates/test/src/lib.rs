@@ -3,13 +3,10 @@
 #![feature(async_closure)]
 
 use wasm_mt::WasmMt;
-// use wasm_mt::console_ln;
 use wasm_mt::utils::{ab_from_text, fetch_as_arraybuffer, fetch_as_text, run_js};
+use wasm_mt_swc::transform_sync;
 use wasm_bindgen::prelude::*;
 use js_sys::ArrayBuffer;
-
-mod transform;
-use transform::swc_transform;
 
 // Per crates/web only; TODO generalize for crates/node
 
@@ -32,7 +29,7 @@ pub async fn get_arraybuffers() -> Result<(ArrayBuffer, ArrayBuffer), JsValue> {
 
 pub fn pkg_js_no_modules_from(pkg_js: &str) -> String {
     let pkg_js = pkg_js.replace("import.meta.url", "''"); // workaround
-    let pkg_js = swc_transform(&pkg_js).unwrap();
+    let pkg_js = transform_sync(&pkg_js).unwrap();
 
     let mut out = String::new();
     out.push_str("const exports = {};");
@@ -43,13 +40,13 @@ pub fn pkg_js_no_modules_from(pkg_js: &str) -> String {
 }
 
 pub async fn create_ab_init(pkg_js_uri: &str) -> Result<ArrayBuffer, JsValue> {
-    // let output = swc_transform("let yy = () => {}; export default yy;");
-    // console_ln!("output: {:?}", output);
+    // let output = transform_sync("let yy = () => {}; export default yy;");
+    // wasm_mt::console_ln!("output: {:?}", output);
     // assert!(output.unwrap().starts_with("\"use strict\""));
 
     let pkg_js = fetch_as_text(pkg_js_uri).await?;
     let pkg_js = pkg_js.replace("import.meta.url", "''"); // workaround
-    let pkg_js = swc_transform(&pkg_js).unwrap();
+    let pkg_js = transform_sync(&pkg_js).unwrap();
 
     let mut init_js = String::new();
     // init_js.push_str(&fix_nodejs); // TODO in case of tests/crates/node
