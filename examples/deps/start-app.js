@@ -2,7 +2,7 @@ export default async function (name) {
     const pkgJs = await (await fetch(`./pkg/${name}.js`)).text();
 
     // Create the 'pure' version of the wasm_bindgen's `init()`
-    const initJs = `return () => { const document = undefined; ${pkgJs} return wasm_bindgen; };`;
+    const initJs = `return () => { const document = undefined; const location = {}; ${pkgJs} return wasm_bindgen; };`;
     const init = (new Function(initJs)).call(null);
 
     const wbg = init();
